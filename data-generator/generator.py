@@ -9,7 +9,7 @@ def generate_random_data():
         'x': random.uniform(0, 100),
         'y': random.uniform(0, 100),
         'z': random.uniform(0, 100),
-        'timestamp': datetime.now()
+        'timestamp': datetime.now().isoformat()
     }
     return data
 
