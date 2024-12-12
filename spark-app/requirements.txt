@@ -1,0 +1,7 @@
+# pyspark==3.4.3
+pandas
+joblib
+scikit-learn
+imbalanced-learn
+catboost
+pyarrow

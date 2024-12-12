@@ -56,7 +56,7 @@ services:
       start_period: 20s
 
   spark-master:
-    image: bitnami/spark:3.4.3
+    build: ./spark-app
     container_name: spark-master
     environment:
       - SPARK_MODE=master
@@ -69,7 +69,7 @@ services:
       - app-network
 
   spark-worker:
-    image: bitnami/spark:3.4.3
+    build: ./spark-app
     container_name: spark-worker
     environment:
       - SPARK_MODE=worker
@@ -83,18 +83,21 @@ services:
       - app-network
 
   spark-app:
-    image: bitnami/spark:3.4.3
+    build: ./spark-app
     container_name: spark-app
     environment:
       - SPARK_MODE=client
     depends_on:
       - spark-master
       - spark-worker
+      - kafka
+      - elasticsearch
     volumes:
       - ./spark-app:/app
-    command: /opt/bitnami/spark/bin/spark-submit --master spark://spark-master:7077 --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.4.1,org.elasticsearch:elasticsearch-spark-30_2.12:8.6.1 /app/app.py
     ports:
       - "4040:4040"
+    command: >
+      spark-submit --master spark://spark-master:7077 --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.4.3,org.elasticsearch:elasticsearch-spark-30_2.12:8.6.1 app.py
     networks:
       - app-network
 

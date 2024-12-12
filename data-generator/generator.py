@@ -41,12 +41,12 @@ for row in rows:
     chunk.append(data)
 
     if len(chunk) == CHUNK_SIZE:
-        producer.send('vibration-data', value=chunk)
+        producer.send('milling-data', value=chunk)
         time.sleep(1)
         chunk = []
 
 if chunk:
-    producer.send('vibration-data', value=chunk)
+    producer.send('milling-data', value=chunk)
     time.sleep(1)
 
 producer.flush()
