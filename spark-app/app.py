@@ -70,19 +70,6 @@ if __name__ == "__main__":
         })
         
         return pred_df
-
-    def write_to_elasticsearch(batch_df, batch_id):
-        """
-        Função para escrever cada micro-batch no Elasticsearch.
-        """
-        batch_df.write \
-            .format("org.elasticsearch.spark.sql") \
-            .option("es.nodes", "elasticsearch") \
-            .option("es.port", "9200") \
-            .option("es.resource", "milling-index") \
-            .option("es.mapping.id", "timestamp") \
-            .mode("append") \
-            .save()
         
     df_raw = spark.readStream \
         .format("kafka") \
@@ -123,14 +110,9 @@ if __name__ == "__main__":
 
     df_final = df_with_predictions.select("*", "predictions.*").drop("predictions")
 
+    # Lower all column names
 
-    console_query = df_final.writeStream \
-        .outputMode("append") \
-        .format("console") \
-        .option("truncate", "true") \
-        .start()
-    console_query.awaitTermination()
-
+    df_final = df_final.toDF(*[c.lower() for c in df_final.columns])
 
     es_query = df_final.writeStream \
         .outputMode("append") \
@@ -138,7 +120,7 @@ if __name__ == "__main__":
         .option("checkpointLocation", "/tmp/checkpoints_es") \
         .option("es.nodes", "elasticsearch") \
         .option("es.port", "9200") \
-        .option("es.resource", "milling-index") \
+        .option("es.resource", "milling-data") \
         .option("es.mapping.id", "timestamp") \
         .start()
     es_query.awaitTermination()
