@@ -53,6 +53,8 @@ if __name__ == "__main__":
             "POWER_WEAR": cols[6],
             "TEMPERATURE_DIFFERENCE": cols[7],
             "TEMPERATURE_POWER": cols[8],
+            "TYPE_L": cols[9],
+            "TYPE_M": cols[10],
         })
         
         HDF_pred = bc_model_HDF.value.predict(data)
@@ -99,7 +101,9 @@ if __name__ == "__main__":
         .withColumn("Power", col("rotational_speed_rpm") * col("torque_nm")) \
         .withColumn("Power_wear", col("Power") * col("tool_wear_min")) \
         .withColumn("Temperature_difference", col("process_temp_k") - col("air_temp_k")) \
-        .withColumn("Temperature_power", col("Temperature_difference").cast("double") / col("Power").cast("double"))
+        .withColumn("Temperature_power", col("Temperature_difference").cast("double") / col("Power").cast("double")) \
+        .withColumn("TYPE_L", col("type") == "L") \
+        .withColumn("TYPE_M", col("type") == "M")
 
     df_features = df_transformed.select(
         col("air_temp_k").alias("AIR_TEMPERATURE_K"),
@@ -110,7 +114,9 @@ if __name__ == "__main__":
         col("Power").alias("POWER"),
         col("Power_wear").alias("POWER_WEAR"),
         col("Temperature_difference").alias("TEMPERATURE_DIFFERENCE"),
-        col("Temperature_power").alias("TEMPERATURE_POWER")
+        col("Temperature_power").alias("TEMPERATURE_POWER"),
+        col("TYPE_L"),
+        col("TYPE_M")
     )
 
     df_with_predictions = df_features.withColumn("predictions", predict_udf(*df_features.columns))
