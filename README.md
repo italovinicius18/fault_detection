@@ -39,6 +39,8 @@ The dataset used for training and evaluation is the **AI4I 2020 Predictive Maint
 
 The Lambda Architecture combines both batch and real-time processing to handle large-scale data efficiently. This implementation uses Docker to containerize and manage the following components:
 
+![MD-Arc](https://github.com/user-attachments/assets/4bc2be47-2f2d-4a06-8b11-85dc68eac4be)
+
 ### Components
 
 #### 1. Data Generator
