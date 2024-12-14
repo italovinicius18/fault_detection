@@ -18,7 +18,7 @@ if __name__ == "__main__":
         StructField("machine_failure", IntegerType(), True),
         StructField("product_id", StringType(), True),
         StructField("type", StringType(), True),
-        StructField("timestamp", StringType(), True)  # Mantém como StringType para compatibilidade
+        StructField("timestamp", StringType(), True)   # Mantém como StringType para compatibilidade
     ])
 
     array_schema = ArrayType(single_record_schema)
@@ -68,6 +68,9 @@ if __name__ == "__main__":
             "OSF_Prediction": OSF_pred,
             "PWF_Prediction": PWF_pred
         })
+
+        pred_df['timestamp'] = cols[11]
+        pred_df['product_id'] = cols[12]
         
         return pred_df
         
@@ -103,7 +106,9 @@ if __name__ == "__main__":
         col("Temperature_difference").alias("TEMPERATURE_DIFFERENCE"),
         col("Temperature_power").alias("TEMPERATURE_POWER"),
         col("TYPE_L"),
-        col("TYPE_M")
+        col("TYPE_M"),
+        col("timestamp"),
+        col("product_id")
     )
 
     df_with_predictions = df_features.withColumn("predictions", predict_udf(*df_features.columns))
